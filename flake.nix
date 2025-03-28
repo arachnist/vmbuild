@@ -18,13 +18,26 @@
         "aarch64-linux"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
-      mkFormatter = system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style;
-      mkVm = system:
+      mkFormatter = system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in
+      pkgs.writeShellApplication {
+        name = "treefmt";
+        text = ''treefmt "$@"'';
+        runtimeInputs = [
+          pkgs.deadnix
+          pkgs.nixfmt-rfc-style
+          pkgs.shellcheck
+          pkgs.treefmt
+        ];
+      };
+      mkVm =
+        system: extraModules:
         nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             disko.nixosModules.disko
-            "${disko}/example/simple-efi.nix"
             (
               { lib, pkgs, ... }:
               {
@@ -47,12 +60,16 @@
                 disko.imageBuilder.enableBinfmt = true;
               }
             )
-          ];
+          ] ++ extraModules;
         };
-      mkConfigurations = x: nixpkgs.lib.listToAttrs (map (arch: (nixpkgs.lib.nameValuePair "vmtest-${arch}" (mkVm arch))) x);
+      mkConfigurations =
+        systems: extraModules:
+        nixpkgs.lib.listToAttrs (
+          map (arch: (nixpkgs.lib.nameValuePair "vmtest-${arch}" (mkVm arch extraModules))) systems
+        );
     in
     {
       formatter = forAllSystems mkFormatter;
-      nixosConfigurations = mkConfigurations systems;
+      nixosConfigurations = { } // (mkConfigurations systems [ "${disko}/example/simple-efi.nix" ]);
     };
 }
