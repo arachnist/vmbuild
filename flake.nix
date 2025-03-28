@@ -24,7 +24,7 @@
           inherit system;
           modules = [
             disko.nixosModules.disko
-            ./modules/efi-basic.nix
+            "${disko}/example/simple-efi.nix"
             (
               { lib, pkgs, ... }:
               {
@@ -40,7 +40,7 @@
                 };
                 users.users.root.password = "dupa.8";
                 system.stateVersion = "25.04";
-                disko.devices.disk.vda = {
+                disko.devices.disk.main = {
                   imageName = "nixos-${pkgs.system}-generic-vm";
                   imageSize = "5G";
                 };
