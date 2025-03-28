@@ -2,7 +2,7 @@
   description = "A very basic flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:arachnist/nixpkgs?ref=ar-patchset-unstable";
     disko.url = "github:arachnist/disko?ref=disko-vm-get-imageName";
   };
 
