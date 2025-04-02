@@ -145,6 +145,82 @@
               services.openssh.settings.PasswordAuthentication = true;
             }
           )
+        ])
+        // (mkConfigurations "twodisk" systems [
+          (
+            { ... }:
+            {
+              disko.devices = {
+                nodev."/" = {
+                  fsType = "tmpfs";
+                  mountOptions = [
+                    "size=8G"
+                    "defaults"
+                    "mode=755"
+                  ];
+                };
+                disk.main = {
+                  type = "disk";
+                  content = {
+                    type = "gpt";
+                    partitions = {
+                      ESP = {
+                        name = "ESP";
+                        size = "1G";
+                        type = "EF00";
+                        content = {
+                          type = "filesystem";
+                          format = "vfat";
+                          mountpoint = "/boot";
+                          mountOptions = [ "umask=0077" ];
+                        };
+                      };
+                      persist = {
+                        size = "100%";
+                        content = {
+                          type = "btrfs";
+                          mountpoint = "/persist";
+                          subvolumes = {
+                            "/nix" = {
+                              mountOptions = [
+                                "compress=zstd"
+                                "noatime"
+                              ];
+                              mountpoint = "/nix";
+                            };
+                          };
+                        };
+                      };
+                    };
+                  };
+                };
+                disk.home = {
+                  type = "disk";
+                  content = {
+                    type = "gpt";
+                    partitions = {
+                      home = {
+                        size = "100%";
+                        content = {
+                          type = "btrfs";
+                          mountpoint = "/home";
+                        };
+                      };
+                    };
+                  };
+                };
+              };
+            }
+          )
+          (
+            { ... }:
+            {
+              users.users.root.password = "dupa.8";
+              disko.devices.disk.main.imageSize = "5G";
+              disko.devices.disk.home.imageSize = "5G";
+              services.openssh.settings.PasswordAuthentication = true;
+            }
+          )
         ]);
     };
 }
