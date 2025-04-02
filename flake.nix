@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:arachnist/nixpkgs?ref=ar-patchset-unstable";
     disko.url = "github:arachnist/disko?ref=disko-vm-get-imageName";
+    # disko.url = "git+file:///home/ar/scm/disko";
   };
 
   outputs =
@@ -53,7 +54,7 @@
                 };
                 system.stateVersion = "25.04";
                 disko.devices.disk.main.imageName = "${baseName}-${pkgs.system}";
-                disko.imageBuilder.enableBinfmt = true;
+                disko.imageBuilder.enableBinfmt = false;
               }
             )
           ] ++ extraModules;
