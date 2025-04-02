@@ -39,5 +39,5 @@ update-git-commits.txt
 /nixpkgs.iml
 
 # disko outputs
-nixos*.raw
+*.raw
 nixos-efi-vars.fd
