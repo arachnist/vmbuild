@@ -213,11 +213,14 @@
             }
           )
           (
-            { ... }:
+            { pkgs, ... }:
             {
               users.users.root.password = "dupa.8";
               disko.devices.disk.main.imageSize = "5G";
-              disko.devices.disk.home.imageSize = "5G";
+              disko.devices.disk.home = {
+                imageSize = "5G";
+                imageName = "twodisk-home-${pkgs.system}";
+              };
               services.openssh.settings.PasswordAuthentication = true;
             }
           )
